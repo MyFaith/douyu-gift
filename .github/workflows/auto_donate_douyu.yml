@@ -7,6 +7,8 @@ on:
   workflow_dispatch: 
   schedule:
     - cron: '10 16 * * *'
+  watch:
+    types: [started]
 
 jobs:
   dy_auto_donate_helper:
