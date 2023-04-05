@@ -1,7 +1,7 @@
 import time
 
 from loguru import logger
-
+from common.dirs import *
 
 class Logger:
     __instance = None
@@ -14,6 +14,11 @@ class Logger:
 
     def __init__(self):
         self.log = logger
+        # 清空文件内容
+        with open(LOG_FILE, 'r+') as file:
+            file.truncate(0)
+        # 写日志
+        logger.add(LOG_FILE)
 
     def info(self, msg):
         return self.log.info(msg)

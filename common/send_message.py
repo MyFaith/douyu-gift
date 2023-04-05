@@ -13,9 +13,9 @@ def log_reader():
 
 
 def send_message(send_key):
-    url = "http://iyuu.cn/{}.send".format(send_key)
+    url = "http://iyuu.cn/{}.send".format(send_key.decode())
     data = {
-        "text": u"DouYu-Helper执行结果",
+        "text": u"斗鱼荧光棒脚本执行结果",
         "desp": log_reader()
     }
     if data['desp']:
