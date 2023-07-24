@@ -87,7 +87,7 @@ def glow_donate(num=1, room_id=12306):
 
 
 def go_room():
-    driver_path = ChromeDriverManager().install()  # 使用webdriver manager自动安装新版本
+    driver_path = ChromeDriverManager(driver_version='114.0.5735.90').install()  # 使用webdriver manager自动安装新版本
     chrome_options = Options()
     chrome_options.add_argument('--no-sandbox')  # 解决DevToolsActivePort文件不存在报错问题
     chrome_options.add_argument('--disable-gpu')  # 禁用GPU硬件加速，如果软件渲染器没有就位，则GPU进程将不会启动
