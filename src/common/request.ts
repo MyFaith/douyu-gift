@@ -9,7 +9,7 @@ class Request {
 
   constructor() {
     // 从环境变量获取cookie
-    const cookie = process.env["COOKIE"] || "";
+    const cookie = process.env["COOKIES"] || "";
     this.cookie = cookie;
     // 创建axios对象
     this.req = axios.create({
