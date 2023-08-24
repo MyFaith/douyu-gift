@@ -24,6 +24,11 @@ jobs:
         run: npm install
       - name: "Build TypeScript"
         run: npx tsc
+      - name: Create ENV File
+        run: |
+          touch .env
+          echo SERVERPUSHKEY=${{ secrets.SERVERPUSHKEY }} >> .env
+          echo COOKIES=${{ secrets.COOKIES }} >> .env
       - name: "Working"
         env:
           SERVERPUSHKEY: ${{ secrets.SERVERPUSHKEY }}
