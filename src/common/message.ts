@@ -2,7 +2,7 @@ import axios from "axios";
 import logger from "./logger";
 import fs from "fs";
 import path from "path";
-const sendKey = process.env["SERVERPUSHKEY"] || "IYUU3446Tb8efe37d8b47474535a7d7e35042e38ba8f6e4f0";
+const sendKey = process.env["SERVERPUSHKEY"] || "";
 
 async function sendMessage() {
   const url = `http://iyuu.cn/${sendKey}.send`;
