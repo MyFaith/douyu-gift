@@ -1,9 +1,9 @@
 name: Douyu
 
 on:
-  push:
-    branches:
-      - master
+  # push:
+  #   branches:
+  #     - master
   workflow_dispatch:
   schedule:
     - cron: "10 16 * * *"
