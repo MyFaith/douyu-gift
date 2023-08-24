@@ -1,0 +1,32 @@
+name: Douyu
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  schedule:
+    - cron: "10 16 * * *"
+  watch:
+    types: [started]
+
+jobs:
+  douyu_donate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Set up Nodejs"
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: "Install requirements"
+        run: npm install
+      - name: "Build TypeScript"
+        run: npx tsc build
+      - name: "Working"
+        env:
+          SERVERPUSHKEY: ${{ secrets.SERVERPUSHKEY }}
+          COOKIES: ${{ secrets.COOKIES }}
+        run: |
+          node ./dist/main.js
