@@ -23,7 +23,7 @@ jobs:
       - name: "Install requirements"
         run: npm install
       - name: "Build TypeScript"
-        run: npx tsc build
+        run: npx tsc
       - name: "Working"
         env:
           SERVERPUSHKEY: ${{ secrets.SERVERPUSHKEY }}
