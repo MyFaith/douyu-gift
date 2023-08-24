@@ -37,7 +37,7 @@ def get_room_list():
     """
     room_list = []
     for room in get_badge()[0]:
-        if room != 74751:
+        if room != '74751':
             room_list.append(room)
     return room_list
 
