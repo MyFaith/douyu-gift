@@ -94,7 +94,7 @@ class Douyu {
     const donateUrl = "/japi/prop/donate/mainsite/v1";
     const data = `propId=268&propCount=${num}&roomId=${roomId}&bizExt={"yzxq":{}}`;
     // 背包中含有道具才会进行赠送，否则会报错
-    if (!this.isHave) {
+    if (this.isHave) {
       const donateRes = await request.send("post", donateUrl, data);
       if (donateRes.error === 0) {
         // 计算剩余荧光棒
