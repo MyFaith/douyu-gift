@@ -32,6 +32,11 @@ import logger from "./common/logger";
       douyu.getNeedExp();
     }
   }
+  await sleep(5000);
   // 发送通知
   await sendMessage();
 })();
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
