@@ -3,6 +3,13 @@ import puppeteer from "puppeteer";
 import { load } from "cheerio";
 import logger from "./logger";
 
+interface Gift {
+  id: number;
+}
+
+type Property = string;
+type Badge = Record<Property, string>;
+
 class Douyu {
   // 是否登录
   public isLogin = false;
@@ -39,7 +46,7 @@ class Douyu {
     logger.info("------背包检查开始------");
     // 防止没有道具导致程序报错
     if (giftResult.data.list.length > 0) {
-      const findRes = giftResult.data.list.find((e: any) => e.id === 268);
+      const findRes = giftResult.data.list.find((e: Gift) => e.id === 268);
       findRes ? (this.own = findRes.count) : 0;
       logger.info(`当前拥有荧光棒${this.own}个,给你喜欢的主播进行赠送吧`);
       this.isHave = true;
@@ -73,9 +80,9 @@ class Douyu {
     // 所有房间列表
     const rooms = $(".fans-badge-list > tbody > tr");
     const expList = [];
-    const badgeMap: any = {};
+    const badgeMap: Badge = {};
     for (const room of rooms) {
-      const roomId: any = $(room).attr("data-fans-room");
+      const roomId: string | number = $(room).attr("data-fans-room") ?? "";
       const anchor = $(room).find(".anchor--name").text();
       const exp = $(room).find("td").eq(2).text();
       const expNow = exp.match(/(?<= )\d.*\d(?=\/\d)/)![0];
