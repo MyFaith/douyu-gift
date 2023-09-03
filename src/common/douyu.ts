@@ -126,7 +126,7 @@ class Douyu {
     const cookie = this.getCookieJSON(request.cookie);
     await page.setCookie(...cookie);
     await page.goto("https://www.douyu.com/3800");
-    await page.waitForNetworkIdle();
+    await page.waitForTimeout(5000);
     logger.info("刷新页面以完成登录");
     await page.reload();
     await page.waitForSelector(".ARoomOpenLock-menu");
