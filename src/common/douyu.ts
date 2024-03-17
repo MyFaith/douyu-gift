@@ -63,8 +63,6 @@ class Douyu {
   async getRoomList() {
     const badge = await this.getBadge();
     const roomList = Object.keys(badge.badgeMap);
-    roomList.splice(roomList.findIndex((e) => e === "74751"), 1);
-    roomList.splice(roomList.findIndex((e) => e === "242045"), 1);
     return roomList;
   }
 
