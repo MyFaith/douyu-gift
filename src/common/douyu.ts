@@ -125,7 +125,7 @@ class Douyu {
    * 访问直播间获取荧光棒
    */
   async claimGifts() {
-    const browser = await puppeteer.launch({ headless: 'new' });
+    const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox"] });
     const page = await browser.newPage();
     const cookie = this.getCookieJSON(request.cookie);
     await page.setCookie(...cookie);
