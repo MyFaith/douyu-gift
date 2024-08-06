@@ -5,7 +5,7 @@ import path from "path";
 
 // 读取pushkey文件
 const pushkeyTxt = fs.readFileSync("/app/config/pushkey.txt");
-const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt || "";
+const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt.toString() || "";
 
 async function sendMessage() {
   const url = `http://iyuu.cn/${sendKey}.send`;

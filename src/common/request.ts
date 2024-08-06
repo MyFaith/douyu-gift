@@ -12,7 +12,7 @@ class Request {
     // 读取cookie文件
     const cookieTxt = fs.readFileSync("/app/config/cookie.txt");
     // 从环境变量获取cookie
-    const cookie = process.env["COOKIES"] || cookieTxt || "";
+    const cookie = process.env["COOKIES"] || cookieTxt.toString() || "";
     this.cookie = cookie;
     // 创建axios对象
     this.req = axios.create({
