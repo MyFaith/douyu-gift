@@ -2,7 +2,10 @@ import axios from "axios";
 import logger from "./logger";
 import fs from "fs";
 import path from "path";
-const sendKey = process.env["SERVERPUSHKEY"] || "";
+
+// 读取pushkey文件
+const pushkeyTxt = fs.readFileSync("/app/config/pushkey.txt");
+const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt || "";
 
 async function sendMessage() {
   const url = `http://iyuu.cn/${sendKey}.send`;

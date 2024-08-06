@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import logger from "./logger";
+import fs from "fs";
 
 class Request {
   // cookie
@@ -8,8 +9,10 @@ class Request {
   private req: AxiosInstance;
 
   constructor() {
+    // 读取cookie文件
+    const cookieTxt = fs.readFileSync("/app/config/cookie.txt");
     // 从环境变量获取cookie
-    const cookie = process.env["COOKIES"] || "";
+    const cookie = process.env["COOKIES"] || cookieTxt || "";
     this.cookie = cookie;
     // 创建axios对象
     this.req = axios.create({
