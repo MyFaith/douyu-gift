@@ -126,9 +126,9 @@ class Douyu {
    */
   async claimGifts() {
     // 初始化浏览器
-    const browser = await puppeteer.launch({ headless: false, args: ["--no-sandbox"] });
+    const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox"] });
     const page = await browser.newPage();
-    await page.setViewport({ width: 1920, height: 1080 });
+    // await page.setViewport({ width: 1920, height: 1080 });
     // 访问直播间
     await page.goto("https://www.douyu.com/1");
     // 设置cookie
