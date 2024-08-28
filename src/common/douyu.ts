@@ -126,7 +126,10 @@ class Douyu {
    */
   async claimGifts() {
     // 初始化浏览器
-    const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox"] });
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--window-size=1920,1080", "--ignore-certificate-errors", "--ignore-certificate-errors-spki-list", "--disable-dev-shm-usage"]
+    });
     const page = await browser.newPage();
     // await page.setViewport({ width: 1920, height: 1080 });
     // 访问直播间
