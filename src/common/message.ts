@@ -4,8 +4,11 @@ import fs from "fs";
 import path from "path";
 
 // 读取pushkey文件
-const pushkeyTxt = fs.readFileSync("/app/config/pushkey.txt");
-const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt.toString() || "";
+let pushkeyTxt = "";
+if (fs.existsSync("/app/config/pushkey.txt")) {
+  pushkeyTxt = fs.readFileSync("/app/config/pushkey.txt").toString();
+}
+const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt;
 
 async function sendMessage() {
   const url = `http://iyuu.cn/${sendKey}.send`;

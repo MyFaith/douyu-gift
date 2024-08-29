@@ -10,9 +10,12 @@ class Request {
 
   constructor() {
     // 读取cookie文件
-    const cookieTxt = fs.readFileSync("/app/config/cookie.txt");
+    let cookieTxt = "";
+    if (fs.existsSync("/app/config/cookie.txt")) {
+      cookieTxt = fs.readFileSync("/app/config/cookie.txt").toString();
+    }
     // 从环境变量获取cookie
-    const cookie = process.env["COOKIES"] || cookieTxt.toString() || "";
+    const cookie = process.env["COOKIES"] || cookieTxt;
     this.cookie = cookie;
     // 创建axios对象
     this.req = axios.create({
