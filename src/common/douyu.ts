@@ -141,7 +141,8 @@ class Douyu {
     logger.info("刷新页面以完成登录");
     await page.reload();
     // 等待页面加载完成
-    await page.waitForSelector(".Title-followNum");
+    await page.waitForSelector(".UserInfo");
+    await sleep(5000);
     // 判断是否登录
     const isLogin = (await page.$(".UserInfo")) !== null;
     if (isLogin) {
@@ -151,7 +152,7 @@ class Douyu {
     }
     // logger.info("再次刷新页面");
     // await page.reload();
-    // await page.waitForSelector("Title-followNum");
+    // await page.waitForSelector(".UserInfo");
     logger.info("关闭直播间");
     await browser.close();
   }
@@ -172,6 +173,10 @@ class Douyu {
     }
     return result;
   }
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export default Douyu;
