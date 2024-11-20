@@ -27,8 +27,10 @@ jobs:
       - name: Create ENV File
         run: |
           touch .env
-          echo "SERVERPUSHKEY=${{ secrets.SERVERPUSHKEY }}" >> .env
-          echo "COOKIES=${{ secrets.COOKIES }}" >> .env
+          cat > .env << EOF
+          SERVERPUSHKEY=${{ secrets.SERVERPUSHKEY }}
+          COOKIES=${{ secrets.COOKIES }}
+          EOF
       - name: "Working"
         env:
           SERVERPUSHKEY: ${{ secrets.SERVERPUSHKEY }}
