@@ -11,17 +11,18 @@ if (fs.existsSync("/app/config/pushkey.txt")) {
 const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt;
 
 async function sendMessage() {
-  const url = `http://iyuu.cn/${sendKey}.send`;
+  const url = `https://api2.pushdeer.com/message/push`;
   const data = {
-    text: "斗鱼荧光棒-完成",
-    desp: fs.readFileSync(path.join(__dirname, "..", "..", "douyu.log"), "utf-8")
+    pushkey: sendKey,
+    text: `【斗鱼荧光棒-完成】\n${fs.readFileSync(path.join(__dirname, "..", "..", "douyu.log"), "utf-8")}`,
+    // desp: fs.readFileSync(path.join(__dirname, "..", "..", "douyu.log"), "utf-8")
   };
   if (data.desp) {
     logger.info("------执行推送------");
     await axios({
-      method: "post",
+      method: "get",
       url,
-      data,
+      params: data,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
