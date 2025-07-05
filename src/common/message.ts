@@ -13,16 +13,17 @@ const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt;
 async function sendMessage() {
   const url = `https://api2.pushdeer.com/message/push`;
   const data = {
-    pushkey: sendKey,
-    text: `【斗鱼荧光棒-完成】\n${fs.readFileSync(path.join(__dirname, "..", "..", "douyu.log"), "utf-8")}`,
-    // desp: fs.readFileSync(path.join(__dirname, "..", "..", "douyu.log"), "utf-8")
+    key: sendKey,
+    type: 'text',
+    text: `【斗鱼荧光棒-完成】`,
+    desp: fs.readFileSync(path.join(__dirname, "..", "..", "douyu.log"), "utf-8")
   };
   if (data.desp) {
     logger.info("------执行推送------");
     await axios({
-      method: "get",
+      method: "post",
       url,
-      params: data,
+      data,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
