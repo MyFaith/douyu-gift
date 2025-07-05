@@ -13,7 +13,7 @@ const sendKey = process.env["SERVERPUSHKEY"] || pushkeyTxt;
 async function sendMessage() {
   const url = `https://api2.pushdeer.com/message/push`;
   const data = {
-    key: sendKey,
+    pushkey: sendKey,
     type: 'text',
     text: `【斗鱼荧光棒-完成】`,
     desp: fs.readFileSync(path.join(__dirname, "..", "..", "douyu.log"), "utf-8")
