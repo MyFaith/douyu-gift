@@ -2,6 +2,33 @@ import axios from "axios";
 import logger from "./logger";
 
 /**
+ * Cookie数据结构接口
+ */
+interface CookieData {
+  updateTime: number;
+  createTime: number;
+  domainCookieMap: {
+    [domain: string]: {
+      updateTime: number;
+      createTime: number;
+      cookies: Array<{
+        domain: string;
+        name: string;
+        value: string;
+        path?: string;
+        httpOnly?: boolean;
+        secure?: boolean;
+        sameSite?: string;
+        expirationDate?: number;
+        hostOnly?: boolean;
+        session?: boolean;
+        storeId?: string;
+      }>;
+    };
+  };
+}
+
+/**
  * Cloudflare KV 配置管理类
  * 用于通过 Cloudflare KV API 获取配置信息
  */
@@ -39,7 +66,12 @@ class KVConfig {
 
       if (response.status === 200) {
         logger.info(`成功从 KV 获取配置: ${key}`);
-        return response.data;
+        // 如果返回的是对象，转换为JSON字符串；如果是字符串，直接返回
+        if (typeof response.data === 'object' && response.data !== null) {
+          return JSON.stringify(response.data);
+        } else {
+          return response.data;
+        }
       } else {
         throw new Error(`获取配置失败: ${response.status} ${response.statusText}`);
       }
@@ -81,7 +113,40 @@ class KVConfig {
    * @returns Cookie 字符串
    */
   async getCookies(): Promise<string> {
-    return await this.getValue("COOKIES");
+    const cookieData = await this.getValue("COOKIES");
+    if (!cookieData) {
+      logger.warn("KV中未找到COOKIES配置");
+      return "";
+    }
+
+    try {
+      // 尝试解析JSON格式的cookie数据
+      const parsedData = JSON.parse(cookieData);
+      
+      // 检查是否有domainCookieMap.douyu.com.cookies结构
+      if (parsedData.domainCookieMap && 
+          parsedData.domainCookieMap["douyu.com"] && 
+          parsedData.domainCookieMap["douyu.com"].cookies) {
+        
+        const cookies = parsedData.domainCookieMap["douyu.com"].cookies;
+        
+        // 将cookies数组转换为字符串格式
+        const cookieString = cookies
+          .map((cookie: any) => `${cookie.name}=${cookie.value}`)
+          .join("; ");
+        
+        logger.info("成功从JSON格式的cookie数据中提取douyu.com域名的cookies");
+        return cookieString;
+      } else {
+        // 如果不是JSON格式或结构不匹配，直接返回原始数据（向后兼容）
+        logger.info("使用原始字符串格式的cookie数据");
+        return cookieData;
+      }
+    } catch (error: any) {
+      // 如果JSON解析失败，可能是旧的字符串格式，直接返回原始数据
+      logger.warn(`Cookie数据解析失败，使用原始格式: ${error.message}`);
+      return cookieData;
+    }
   }
 
   /**
@@ -102,6 +167,21 @@ class KVConfig {
   }
 
   /**
+   * 设置 JSON 格式的 Cookie 配置
+   * @param cookieData JSON格式的cookie数据对象
+   * @returns 是否设置成功
+   */
+  async setCookiesJSON(cookieData: CookieData): Promise<boolean> {
+    try {
+      const jsonString = JSON.stringify(cookieData);
+      return await this.setValue("COOKIES", jsonString);
+    } catch (error: any) {
+      logger.error(`设置JSON格式Cookie失败: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
    * 设置推送密钥配置
    * @param pushKey 推送密钥字符串
    * @returns 是否设置成功
@@ -114,3 +194,4 @@ class KVConfig {
 const kvConfig = new KVConfig();
 
 export default kvConfig;
+export type { CookieData };
