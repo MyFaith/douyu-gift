@@ -1,8 +1,12 @@
 import Douyu from "./common/douyu";
 import sendMessage from "./common/message";
 import logger from "./common/logger";
+import request from "./common/request";
 
 (async () => {
+  // 初始化配置，从 KV 加载 Cookie
+  await request.init();
+  
   const douyu = new Douyu();
   logger.info("------登录检查开始------");
   const isLogin = await douyu.checkLogin();

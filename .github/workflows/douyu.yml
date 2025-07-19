@@ -24,16 +24,18 @@ jobs:
         run: npm install
       - name: "Build TypeScript"
         run: npx tsc
-      - name: Create ENV File
+      - name: "Create ENV File"
         run: |
           touch .env
           cat > .env << EOF
-          SERVERPUSHKEY=${{ secrets.SERVERPUSHKEY }}
-          COOKIES=${{ secrets.COOKIES }}
+          CF_ACCOUNT_ID=${{ secrets.CF_ACCOUNT_ID }}
+          CF_NAMESPACE_ID=${{ secrets.CF_NAMESPACE_ID }}
+          CF_API_TOKEN=${{ secrets.CF_API_TOKEN }}
           EOF
       - name: "Working"
         env:
-          SERVERPUSHKEY: ${{ secrets.SERVERPUSHKEY }}
-          COOKIES: ${{ secrets.COOKIES }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_NAMESPACE_ID: ${{ secrets.CF_NAMESPACE_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
           node ./dist/main.js

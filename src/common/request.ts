@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import logger from "./logger";
-import fs from "fs";
+import kvConfig from "./kv-config";
 
 class Request {
   // cookie
@@ -9,14 +9,8 @@ class Request {
   private req: AxiosInstance;
 
   constructor() {
-    // 读取cookie文件
-    let cookieTxt = "";
-    if (fs.existsSync("/app/config/cookie.txt")) {
-      cookieTxt = fs.readFileSync("/app/config/cookie.txt").toString();
-    }
-    // 从环境变量获取cookie
-    const cookie = process.env["COOKIES"] || cookieTxt;
-    this.cookie = cookie;
+    // 初始化时设置空的 cookie，稍后通过 init 方法异步获取
+    this.cookie = "";
     // 创建axios对象
     this.req = axios.create({
       baseURL: "https://www.douyu.com",
@@ -27,6 +21,20 @@ class Request {
         Cookie: this.cookie
       }
     });
+  }
+
+  /**
+   * 初始化配置，从 KV 获取 Cookie
+   */
+  async init() {
+    try {
+      this.cookie = await kvConfig.getCookies();
+      // 更新 axios 实例的 Cookie 头
+      this.req.defaults.headers.Cookie = this.cookie;
+      logger.info("成功从 KV 加载 Cookie 配置");
+    } catch (error: any) {
+      logger.error(`从 KV 加载 Cookie 配置失败: ${error.message}`);
+    }
   }
 
   /**
