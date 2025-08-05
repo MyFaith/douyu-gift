@@ -162,11 +162,55 @@ class Douyu {
 
   /**
    * 获取cookie json
-   * 解析cookie字符串格式数据
+   * 解析JSON格式cookie数据
    * @param cookieString cookie字符串数据
    * @returns puppeteer格式的cookie数组
    */
   getCookieJSON(cookieString: string): Array<{
+    name: string;
+    value: string;
+    domain: string;
+    path: string;
+    httpOnly: boolean;
+    secure: boolean;
+    sameSite: 'Strict' | 'Lax' | 'None' | undefined;
+  }> {
+    try {
+      // 尝试解析JSON格式的cookie数据
+      const cookieData = JSON.parse(cookieString);
+      
+      if (cookieData.domainCookieMap && cookieData.domainCookieMap['douyu.com']) {
+        // 处理新的JSON格式cookie数据
+        const douyuCookies = cookieData.domainCookieMap['douyu.com'].cookies;
+        const result = douyuCookies.map((cookie: any) => ({
+          name: cookie.name,
+          value: cookie.value,
+          domain: cookie.domain,
+          path: cookie.path || '/',
+          httpOnly: cookie.httpOnly || false,
+          secure: cookie.secure || false,
+          sameSite: this.getSameSiteValue(cookie.sameSite)
+        }));
+        
+        logger.info(`从JSON格式cookie中解析到${result.length}个cookies`);
+        return result;
+      } else {
+        // 如果不是新的JSON格式，尝试旧的字符串格式
+        return this.parseCookieString(cookieString);
+      }
+    } catch (error) {
+      // JSON解析失败，尝试旧的字符串格式
+      logger.warn('JSON格式cookie解析失败，尝试字符串格式');
+      return this.parseCookieString(cookieString);
+    }
+  }
+
+  /**
+   * 解析cookie字符串格式数据
+   * @param cookieString cookie字符串数据
+   * @returns puppeteer格式的cookie数组
+   */
+  parseCookieString(cookieString: string): Array<{
     name: string;
     value: string;
     domain: string;
@@ -193,6 +237,26 @@ class Douyu {
     }
     logger.info(`从cookie字符串中解析到${result.length}个cookies`);
     return result;
+  }
+
+  /**
+   * 转换sameSite值
+   * @param sameSite 原始sameSite值
+   * @returns 标准化的sameSite值
+   */
+  getSameSiteValue(sameSite: string): 'Strict' | 'Lax' | 'None' | undefined {
+    switch (sameSite?.toLowerCase()) {
+      case 'strict':
+        return 'Strict';
+      case 'lax':
+        return 'Lax';
+      case 'none':
+        return 'None';
+      case 'unspecified':
+        return undefined;
+      default:
+        return undefined;
+    }
   }
 
 }

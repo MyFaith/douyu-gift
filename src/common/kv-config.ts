@@ -130,12 +130,17 @@ class KVConfig {
         
         const cookies = parsedData.domainCookieMap["douyu.com"].cookies;
         
+        // 筛选只保留www.douyu.com和.douyu.com域名的cookie
+        const filteredCookies = cookies.filter((cookie: any) => 
+          cookie.domain === "www.douyu.com" || cookie.domain === ".douyu.com"
+        );
+        
         // 将cookies数组转换为字符串格式
-        const cookieString = cookies
+        const cookieString = filteredCookies
           .map((cookie: any) => `${cookie.name}=${cookie.value}`)
           .join("; ");
         
-        logger.info("成功从JSON格式的cookie数据中提取douyu.com域名的cookies");
+        logger.info(`从${cookies.length}个cookie中筛选出${filteredCookies.length}个www.douyu.com和.douyu.com域名的cookies`);
         return cookieString;
       } else {
         // 如果不是JSON格式或结构不匹配，直接返回原始数据（向后兼容）
