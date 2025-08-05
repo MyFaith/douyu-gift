@@ -2,7 +2,6 @@ import request from "./request";
 import puppeteer from "puppeteer";
 import { load } from "cheerio";
 import logger from "./logger";
-import type { CookieData } from "./kv-config";
 
 interface Gift {
   id: number;
@@ -128,6 +127,7 @@ class Douyu {
   async claimGifts() {
     // 初始化浏览器
     const browser = await puppeteer.launch({
+      executablePath: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
       headless: true,
       args: ["--no-sandbox", "--window-size=1920,1080", "--ignore-certificate-errors", "--ignore-certificate-errors-spki-list", "--disable-dev-shm-usage"]
     });
@@ -135,10 +135,10 @@ class Douyu {
     // await page.setViewport({ width: 1920, height: 1080 });
     // 访问直播间
     await page.goto("https://www.douyu.com/1");
-    // 设置cookie - 获取原始cookie数据以支持JSON格式
+    // 设置cookie
     const kvConfig = (await import('./kv-config')).default;
-    const rawCookieData = await kvConfig.getValue("COOKIES");
-    const cookie = this.getCookieJSON(rawCookieData);
+    const cookieString = await kvConfig.getValue("COOKIES");
+    const cookie = this.getCookieJSON(cookieString);
     await page.setCookie(...cookie);
     // 刷新页面登录
     logger.info("刷新页面以完成登录");
@@ -162,12 +162,11 @@ class Douyu {
 
   /**
    * 获取cookie json
-   * 支持字符串格式和JSON格式的cookie数据
-   * 新版本支持从domainCookieMap.douyu.com.cookies数组中提取cookie数据
-   * @param cookieData 原始cookie数据（字符串或JSON字符串）
+   * 解析cookie字符串格式数据
+   * @param cookieString cookie字符串数据
    * @returns puppeteer格式的cookie数组
    */
-  getCookieJSON(cookieData: string): Array<{
+  getCookieJSON(cookieString: string): Array<{
     name: string;
     value: string;
     domain: string;
@@ -176,37 +175,8 @@ class Douyu {
     secure: boolean;
     sameSite: 'Strict' | 'Lax' | 'None' | undefined;
   }> {
-    try {
-      // 尝试解析JSON格式的cookie数据
-      const parsedData: CookieData = JSON.parse(cookieData);
-      
-      // 检查是否有domainCookieMap.douyu.com.cookies结构
-      if (parsedData.domainCookieMap && 
-          parsedData.domainCookieMap["douyu.com"] && 
-          parsedData.domainCookieMap["douyu.com"].cookies) {
-        
-        const cookies = parsedData.domainCookieMap["douyu.com"].cookies;
-        logger.info(`从JSON格式cookie数据中提取到${cookies.length}个douyu.com域名的cookies`);
-        
-        // 转换为puppeteer需要的格式
-        return cookies.map((cookie) => ({
-          name: cookie.name,
-          value: cookie.value,
-          domain: cookie.domain || "www.douyu.com",
-          path: cookie.path || "/",
-          httpOnly: cookie.httpOnly || false,
-          secure: cookie.secure || false,
-          sameSite: this.normalizeSameSite(cookie.sameSite)
-        }));
-      }
-    } catch (error) {
-      // JSON解析失败，按字符串格式处理
-      logger.info("Cookie数据不是JSON格式，使用传统字符串解析方式");
-    }
-    
-    // 原有的字符串格式处理逻辑（向后兼容）
     const result = [];
-    const first = cookieData.split(";");
+    const first = cookieString.split(";");
     for (const s of first) {
       const second = s.split("=");
       if (second.length >= 2) {
@@ -221,30 +191,10 @@ class Douyu {
         });
       }
     }
-    logger.info(`从字符串格式cookie数据中解析到${result.length}个cookies`);
+    logger.info(`从cookie字符串中解析到${result.length}个cookies`);
     return result;
   }
 
-  /**
-   * 标准化sameSite属性值
-   * @param sameSite 原始sameSite值
-   * @returns 标准化后的sameSite值
-   */
-  private normalizeSameSite(sameSite?: string): 'Strict' | 'Lax' | 'None' | undefined {
-    if (!sameSite) return undefined;
-    
-    const normalized = sameSite.toLowerCase();
-    switch (normalized) {
-      case 'strict':
-        return 'Strict';
-      case 'lax':
-        return 'Lax';
-      case 'none':
-        return 'None';
-      default:
-        return undefined;
-    }
-  }
 }
 
 function sleep(ms: number) {
