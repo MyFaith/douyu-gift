@@ -127,7 +127,6 @@ class Douyu {
   async claimGifts() {
     // 初始化浏览器
     const browser = await puppeteer.launch({
-      executablePath: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
       headless: true,
       args: ["--no-sandbox", "--window-size=1920,1080", "--ignore-certificate-errors", "--ignore-certificate-errors-spki-list", "--disable-dev-shm-usage"]
     });
