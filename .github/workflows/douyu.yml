@@ -17,11 +17,12 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v2
       - name: "Set up Nodejs"
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3 # 升级到 v3 以支持内置缓存功能
         with:
           node-version: 16
+          cache: 'npm' # 指定缓存 npm 依赖
       - name: "Install requirements"
-        run: npm install --registry=https://registry.npmmirror.com
+        run: npm install
       - name: "Build TypeScript"
         run: npx tsc
       - name: "Create ENV File"
