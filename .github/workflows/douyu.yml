@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 16
       - name: "Install requirements"
-        run: npm install
+        run: npm install --registry=https://registry.npmmirror.com
       - name: "Build TypeScript"
         run: npx tsc
       - name: "Create ENV File"
