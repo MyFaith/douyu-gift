@@ -15,7 +15,7 @@
     "axios": "^1.4.0",
     "cheerio": "1.0.0-rc.12",
     "log4js": "^6.9.1",
-    "puppeteer": "^21.1.0",
+    "puppeteer": "^24.15.0",
     "typescript": "^5.2.2"
   },
   "devDependencies": {
